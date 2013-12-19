@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<script type='text/javascript' src='inject.js'></script>
+		<script>
+		/*
+		Inject.setExpires(0);
+	    Inject.clearCache();
+	    Inject.addModuleRule(/base/, function(id) {
+	    	return 'amd';
+	   	});
+		Inject.setModuleRoot('modules');
+		require.run('program');
+		*/
+		var Sabuk;
+		function define(s) {
+			Sabuk = s();
+		}
+
+		</script>
+		<script type='text/javascript' src='modules/sabuk.js'></script>
+
+
+ 	</head>
+ 	<body></body>
+</html>
