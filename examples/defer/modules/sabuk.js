@@ -17,7 +17,7 @@ define(function() {
 		}
 	};
 
-	if(Promise) {
+	if(Promise && Promise.toString().indexOf('[native code]') > -1) {
 		//We have native promises
 
 		//Underlying library
@@ -27,19 +27,72 @@ define(function() {
 		Sabuk.Promise = Promise;
 	}
 
-	var promiseConstructorFunctions = [
-		Sabuk._promise,
-		function() {}
-	];
+	var rejectFunctions = ['reject', 'fail'];
+	var fulfillFunctions = ['fulfill', 'resolve'];
 
 	Sabuk.setLibrary = function(Promise, libName) {
 		if(LibraryConfigMap[libName]) {
 			this._promise = Promise;
 			var libConfig = LibraryConfigMap[libName];
 			for(var key in libConfig) {
-				Sabuk[key] = libConfig[key];
+				this[key] = libConfig[key];
+			}
+
+			if(this._syntax === 1) {
+				//Setup resolution proxies
+				var i, rejectFunctionName, fulfillFunctionName;
+
+				//Find the rejection function
+				for(i = 0; i < rejectFunctions.length; i++) {
+					if(typeof this[rejectFunctions[i]] === 'function') {
+						rejectFunctionName = rejectFunctions[i];
+					}
+				}
+
+				//Setup proxies to rejection function
+				for(i = 0; i < rejectFunctions.length; i++) {
+					if(!this[rejectFunctions[i]]) {
+						this[rejectFunctions[i]] = this[rejectFunctionName];
+					}
+				}
+
+				//Find the fulfill function
+				for(i = 0; i < fulfillFunctions.length; i++) {
+					if(typeof this[fulfillFunctions[i]] === 'function') {
+						fulfillFunctionName = fulfillFunctions[i];
+					}
+				}
+
+				//Setup proxies to fulfill function
+				for(i = 0; i < fulfillFunctions.length; i++) {
+					if(!this[fulfillFunctions[i]]) {
+						this[fulfillFunctions[i]] = this[fulfillFunctionName];
+					}
+				}
 			}
 		}
+	};
+
+	var promiseConstructorFunctions = [
+		Sabuk._promise,
+		function(closure) {
+			var d = Sabuk.defer();
+
+			closure(function fulfill(value) {
+				d.fulfill.call(d, value);
+			}, function reject(reason) {
+				d.reject(d, reason);
+			});
+
+			return d.promise;
+		}
+	];
+
+	Sabuk.Promise = function(closure) {
+		if(!this._promise) {
+			throw new Error('No promise library has been set.');
+		}
+		return promiseConstructorFunctions[this._syntax](closure);
 	};
 
 	var deferFunctions = [
@@ -59,6 +112,9 @@ define(function() {
 	];
 
 	Sabuk.defer = function() {
+		if(!this._promise) {
+			throw new Error('No promise library has been set.');
+		}
 		return deferFunctions[this._syntax]();
 	};
 
