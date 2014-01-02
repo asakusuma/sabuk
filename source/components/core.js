@@ -42,31 +42,19 @@ var Sabuk = (function() {
 				//Setup resolution proxies
 				var i, rejectFunctionName, fulfillFunctionName;
 
+				var d = Sabuk.defer();
+
 				//Find the rejection function
 				for(i = 0; i < rejectFunctions.length; i++) {
-					if(typeof this[rejectFunctions[i]] === 'function') {
-						rejectFunctionName = rejectFunctions[i];
-					}
-				}
-
-				//Setup proxies to rejection function
-				for(i = 0; i < rejectFunctions.length; i++) {
-					if(!this[rejectFunctions[i]]) {
-						this[rejectFunctions[i]] = this[rejectFunctionName];
+					if(typeof d[rejectFunctions[i]] === 'function') {
+						this.rejectFunctionName = rejectFunctions[i];
 					}
 				}
 
 				//Find the fulfill function
 				for(i = 0; i < fulfillFunctions.length; i++) {
-					if(typeof this[fulfillFunctions[i]] === 'function') {
-						fulfillFunctionName = fulfillFunctions[i];
-					}
-				}
-
-				//Setup proxies to fulfill function
-				for(i = 0; i < fulfillFunctions.length; i++) {
-					if(!this[fulfillFunctions[i]]) {
-						this[fulfillFunctions[i]] = this[fulfillFunctionName];
+					if(typeof d[fulfillFunctions[i]] === 'function') {
+						this.fulfillFunctionName = fulfillFunctions[i];
 					}
 				}
 			}
@@ -120,7 +108,23 @@ var Sabuk = (function() {
 		if(!this._promise) {
 			throw new Error('No promise library has been set.');
 		}
-		return deferFunctions[this._syntax]();
+		var d = deferFunctions[this._syntax]();
+
+		//Setup proxies to rejection function
+		for(i = 0; i < rejectFunctions.length; i++) {
+			if(!d[rejectFunctions[i]]) {
+				d[rejectFunctions[i]] = d[this.rejectFunctionName];
+			}
+		}
+
+		//Setup proxies to fulfill function
+		for(i = 0; i < fulfillFunctions.length; i++) {
+			if(!d[fulfillFunctions[i]]) {
+				d[fulfillFunctions[i]] = d[this.fulfillFunctionName];
+			}
+		}
+
+		return d;
 	};
 
 	return Sabuk;
