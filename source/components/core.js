@@ -64,12 +64,16 @@ var Sabuk = (function() {
 	var promiseConstructorFunctions = [
 		Sabuk._promise,
 		function(closure) {
+			if(!closure) {
+				throw new Error('You must pass in a resolving function');
+			}
+
 			var d = Sabuk.defer();
 
 			closure(function fulfill(value) {
 				d.fulfill.call(d, value);
 			}, function reject(reason) {
-				d.reject(d, reason);
+				d.reject.call(d, reason);
 			});
 
 			return d.promise;
@@ -77,10 +81,10 @@ var Sabuk = (function() {
 	];
 
 	Sabuk.Promise = function(closure) {
-		if(!this._promise) {
+		if(!Sabuk._promise) {
 			throw new Error('No promise library has been set.');
 		}
-		return promiseConstructorFunctions[this._syntax](closure);
+		return promiseConstructorFunctions[Sabuk._syntax](closure);
 	};
 
 	var deferFunctions = [
