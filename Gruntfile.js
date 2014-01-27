@@ -15,6 +15,12 @@ module.exports = function(grunt) {
         dest: 'build',
         expand: true,
         cwd: 'source/'
+      },
+      dist: {
+        src: 'main.js',
+        dest: '',
+        expand: true,
+        cwd: 'source/'
       }
     },
     jshint: {
@@ -45,7 +51,8 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'jshint:all',
     'includereplace:amd',
-    'includereplace:global'
+    'includereplace:global',
+    'includereplace:dist'
   ]);
 
   grunt.registerTask('test', ['shell:test']);

@@ -150,3 +150,5 @@ var Sabuk = (function() {
 
 	return Sabuk;
 })();
+
+module.exports = Sabuk;

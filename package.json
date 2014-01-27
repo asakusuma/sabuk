@@ -1,11 +1,17 @@
 {
-  "name": "Sabuk",
+  "name": "sabuk",
   "version": "0.2.2",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node app.js",
     "test": "node_modules/venus/bin/venus run -t testing/specs -n"
   },
+  "author": {
+    "name" : "Asa Kusuma",
+    "email" : "asa.kusuma@gmail.com",
+    "url" : "http://asakusuma.com/"
+  },
+  "main": "main",
   "dependencies": {},
   "devDependencies": {
     "express": "*",

@@ -3,9 +3,26 @@
  * @venus-include ../../build/sabuk-global.js
  */
 
-Sabuk.setLibrary(Promise, 'bluebird');
-
 describe('Sabuk Core', function() {
+
+  describe('setLibrary()', function() {
+
+    it('should return a deferred with a promise as a property', function() {
+      var d = Sabuk.defer();
+      expect(d.promise).to.be.ok();
+      expect(d.promise.then).to.be.ok();
+    });
+
+    it('should return a deferred with a promise as a property', function() {
+      var d = Sabuk.defer();
+      expect(d.promise).to.be.ok();
+      expect(d.promise.then).to.be.ok();
+    });
+
+  });
+
+  Sabuk.setLibrary(Promise, 'bluebird');
+
   describe('defer()', function() {
     it('should return a deferred with a promise as a property', function() {
       var d = Sabuk.defer();

@@ -10,8 +10,17 @@
 			Sabuk = s();
 		}
 
+
+		var P = function() {
+			return {
+				dodat: function() {
+					console.log('smurf');
+				}
+			};
+		}
+
 		</script>
-		<script type='text/javascript' src='modules/sabuk.js'></script>
+		<script type='text/javascript' src='../../build/sabuk-global.js'></script>
 		<script>
 			Sabuk.setLibrary(Bluebird, 'bluebird');
 		</script>
